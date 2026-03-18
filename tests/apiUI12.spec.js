@@ -133,3 +133,41 @@ test('SFDC - UI + API Script', async ({ request }) => {
         console.log("Contact saved successfully and name is: ", await contactNameElement.textContent());
 
 });
+
+test('SFDC - UI + API Script 434', async ({ request }) => {
+
+    //API Scripts
+
+  const loginUrl = 'https://login.salesforce.com/services/oauth2/token';
+
+  const grantType = 'password';
+  const user_name = process.env.sit_salesforce_username;
+  const pass = process.env.sit_salesforce_password;
+  const clientId = process.env.consumer_key;
+  const clientSecret = process.env.consumer_secret;
+
+  // Step 1: Authenticate and get access token
+    const loginResponse = await request.post(loginUrl, {
+      headers: {
+        'Content-Type' : 'application/x-www-form-urlencoded'
+      },
+      form: {
+        grant_type: grantType,
+        username: user_name,
+        password: pass,
+        client_id: clientId,
+        client_secret: clientSecret
+      }
+    });
+
+    console.log('Login response is: ', (await (loginResponse).body()).toString());
+    expect((loginResponse).ok()).toBeTruthy();
+
+
+    const loginBody = await loginResponse.json();
+    const accessToken = loginBody.access_token;
+    const instanceUrl = loginBody.instance_url;
+
+    console.log('Access token is: ', accessToken);
+
+    console.log('Instance URL is: ', instanceUrl);
